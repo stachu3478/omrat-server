@@ -63,13 +63,17 @@ createConnection().then(async connection => {
     app.listen(3000);
 
     // insert new users for test
-    await connection.manager.save(connection.manager.create(User, {
+    const userRepo = getRepository(User)
+
+    await userRepo.save(Object.assign(new User(), {
         email: "timbersam@fmail.com",
-        role: 'admin'
+        role: 'admin',
+        password: 'admin'
     }));
-    await connection.manager.save(connection.manager.create(User, {
+    await userRepo.save(Object.assign(new User(), {
         email: "phantomassassin@gmail.com",
-        role: 'anotator'
+        role: 'anotator',
+        password: 'anotator'
     }));
 
     console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results");

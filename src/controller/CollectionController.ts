@@ -6,7 +6,7 @@ export class CollectionController extends AppController {
 
     private collectionRepository = getRepository(Collection);
 
-    async all() {
+    async all(): Promise<any> {
         if (this.currentUser?.role !== 'anotator') {
             return { status: 403 }
         }
