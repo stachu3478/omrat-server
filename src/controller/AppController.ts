@@ -3,7 +3,7 @@ import SessionWrapper from "../utils/SessionWrapper";
 import { User } from "../entity/User";
 
 export default class AppController {
-  public currentUser?: User | false
+  public currentUser?: User
   protected request: Request
   protected response: Response
   protected next: NextFunction

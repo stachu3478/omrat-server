@@ -7,20 +7,25 @@ export class UserController extends AppController {
 
     private userRepository = getRepository(User);
 
-    async all(request: Request, response: Response, next: NextFunction) {
+    async all() {
+        if (this.currentUser?.role !== 'admin') {
+            return { status: 403 }
+        }
         return this.userRepository.find();
     }
 
-    async one(request: Request, response: Response, next: NextFunction) {
-        return this.userRepository.findOne(request.params.id);
+    async save() {
+        if (this.currentUser?.role !== 'admin') {
+            return { status: 403 }
+        }
+        return this.userRepository.save(this.request.body);
     }
 
-    async save(request: Request, response: Response, next: NextFunction) {
-        return this.userRepository.save(request.body);
-    }
-
-    async remove(request: Request, response: Response, next: NextFunction) {
-        let userToRemove = await this.userRepository.findOne(request.params.id);
+    async remove() {
+        if (this.currentUser?.role !== 'admin') {
+            return { status: 403 }
+        }
+        let userToRemove = await this.userRepository.findOne(this.request.params.id);
         await this.userRepository.remove(userToRemove);
     }
 

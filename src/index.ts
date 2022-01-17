@@ -9,6 +9,22 @@ import session = require("express-session");
 import { TypeormStore } from "connect-typeorm/out";
 import Session from "./entity/Sesssion";
 
+function handleResponse(req: Request, res: Response, result: any) {
+    if (result !== null && result !== undefined) {
+        const { status } = result
+        if (status) {
+            res.status(status)
+        } else if (req.method === 'get') {
+            res.status(200)
+        } else if (req.method === 'post') {
+            res.status(201)
+        } else if (req.method === 'delete') {
+            res.status(204)
+        }
+        res.json(result);
+    }
+}
+
 createConnection().then(async connection => {
 
     // create express app
@@ -32,10 +48,9 @@ createConnection().then(async connection => {
             controller.beforeAction().then(() => {
                 const result = (controller as any)[route.action](req, res, next);
                 if (result instanceof Promise) {
-                    result.then(result => result !== null && result !== undefined ? res.send(result) : undefined);
-    
-                } else if (result !== null && result !== undefined) {
-                    res.json(result);
+                    result.then((result) => handleResponse(req, res, result));
+                } else {
+                    handleResponse(req, res, result)
                 }
             })
         });
