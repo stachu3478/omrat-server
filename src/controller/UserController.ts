@@ -1,3 +1,4 @@
+import _ = require("lodash");
 import {getRepository} from "typeorm";
 import {User} from "../entity/User";
 import AppController from "./AppController";
@@ -10,7 +11,7 @@ export class UserController extends AppController {
         if (this.currentUser?.role !== 'admin') {
             return { status: 403 }
         }
-        return this.userRepository.find();
+        return (await this.userRepository.find()).map(u => _.pick(u, ['email', 'role']));
     }
 
     async save() {
