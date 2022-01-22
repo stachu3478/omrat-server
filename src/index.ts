@@ -8,6 +8,7 @@ import {User} from "./entity/User";
 import session = require("express-session");
 import { TypeormStore } from "connect-typeorm/out";
 import Session from "./entity/Sesssion";
+import * as cors from "cors"
 
 function handleResponse(req: Request, res: Response, result: any) {
     if (result !== null && result !== undefined) {
@@ -26,9 +27,14 @@ function handleResponse(req: Request, res: Response, result: any) {
 }
 
 createConnection().then(async connection => {
+    const corsPolicy = cors({
+        origin: true,
+        credentials: true
+    })
 
     // create express app
     const app = express();
+    app.use(corsPolicy)
     app.use(bodyParser.json());
     app.use(session({
         secret: process.env.SESSION_SECRET || 'secret',
@@ -55,6 +61,8 @@ createConnection().then(async connection => {
             })
         });
     });
+
+    app.options('*', corsPolicy)
 
     // setup express app here
     // ...
