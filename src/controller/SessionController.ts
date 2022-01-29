@@ -21,10 +21,13 @@ export class SessionController extends AppController {
       }
     }
 
-    async destroy() {
+    destroy() {
       if (this.currentUser) {
+        console.log('Removin da user')
         this.session.removeUser()
+        console.log('User removed')
       }
+      return { status: 400 }
     }
 
     private get loginParams() {

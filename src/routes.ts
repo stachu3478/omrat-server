@@ -29,7 +29,7 @@ export const Routes = [{
     action: "create"
 }, {
     method: "delete",
-    route: "/session/:id",
+    route: "/session",
     controller: SessionController,
     action: "destroy"
 }, {

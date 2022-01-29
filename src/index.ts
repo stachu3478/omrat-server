@@ -11,6 +11,16 @@ import Session from "./entity/Sesssion";
 import * as cors from "cors"
 
 function handleResponse(req: Request, res: Response, result: any) {
+    let sent = result
+    JSON.stringify(res.getHeaders())
+    if (process.env.NODE_ENV !== 'production') { // Broken cookies on local cors
+        const setCookie = res.getHeader('Set-Cookie')
+        if (setCookie) {
+            sent = sent || {}
+            sent['Set-Cookie'] = res.getHeader('Set-Cookie')
+        }
+    }
+    
     if (result !== null && result !== undefined) {
         const { status } = result
         if (status) {
@@ -23,13 +33,16 @@ function handleResponse(req: Request, res: Response, result: any) {
             res.status(204)
         }
         res.json(result);
+    } else if (req.method === 'delete') {
+        res.status(204)
     }
 }
 
 createConnection().then(async connection => {
     const corsPolicy = cors({
         origin: true,
-        credentials: true
+        credentials: true,
+        allowedHeaders: ['Set-Cookie', 'x-requested-with', 'content-type', 'content-length', 'X-Powerered-By']
     })
 
     // create express app
@@ -63,6 +76,10 @@ createConnection().then(async connection => {
     });
 
     app.options('*', corsPolicy)
+    app.use('*', (req: Request, res: Response) => {
+      res.status(404)
+      res.end()
+    })
 
     // setup express app here
     // ...
