@@ -1,38 +1,22 @@
 import {getRepository} from "typeorm";
 import AppController from "./AppController";
 import { Collection } from "../entity/Collection";
+import { pick } from "lodash";
 
 export class CollectionController extends AppController {
 
     private collectionRepository = getRepository(Collection);
 
     async all(): Promise<any> {
-        if (this.currentUser?.role !== 'anotator') {
-            return { status: 403 }
-        }
         return this.collectionRepository.find();
     }
 
     async one() {
-        if (this.currentUser?.role !== 'anotator') {
-            return { status: 403 }
-        }
         return this.collectionRepository.findOne({ id: parseInt(this.request.params.id) });
     }
 
     async save() {
-        if (this.currentUser?.role !== 'anotator') {
-            return { status: 403 }
-        }
-        return this.collectionRepository.save(this.request.body);
+        const record = pick(this.request.body, ['name'])
+        return this.collectionRepository.save(record);
     }
-
-    async remove() {
-        if (this.currentUser?.role !== 'anotator') {
-            return { status: 403 }
-        }
-        let collecionToRemove = await this.collectionRepository.findOne(this.request.params.id);
-        await this.collectionRepository.remove(collecionToRemove);
-    }
-
 }

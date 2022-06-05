@@ -9,7 +9,7 @@ export class Collection {
     name: string;
 
     @Column()
-    creatorEmail: string
+    snapshotImagePath: string;
 
     @Column('bigint')
     createdAt = Date.now();
